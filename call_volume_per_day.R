@@ -12,7 +12,22 @@ callsperday <- sqlQuery(channel, "
   order by trunc(contactstart);")
 odbcClose(channel)                        
 
-plot(callsperday, type='l')
+
+library(lubridate)
+callsperday$WDAY <- as.factor(wday(callsperday$CALLDATE))
+pred.weekday <- predict(ccc, newdata = callsperday$CALLDATE)
+callsperday$PRED <- pred.weekday[callsperday$WDAY]
+  
+
+ggplot(test_data, aes(date)) + 
+  geom_line(aes(y = var0, colour = "var0")) + 
+  geom_line(aes(y = var1, colour = "var1"))
 
 library(ggplot2)
-ggplot(callsperday, aes(CALLDATE, CALLVOLUME))  + geom_line() + xlab("Date") + ylab("Call Volume") + labs(title = "Call Volume per Day") + theme(panel.background = element_rect(fill='#e3e1f1', colour='#a391b1'))
+ggplot(callsperday, aes(CALLDATE))  + 
+  geom_line(aes(y = PRED), colour = "red") +
+  geom_line(aes(y = CALLVOLUME), colour = "black") +
+  xlab("Date") + ylab("Call Volume") + labs(title = "Call Volume per Day") + theme(panel.background = element_rect(fill='#e3e1f1', colour='#a391b1'))
+
+sqrt(with(callsperday, sum((CALLVOLUME-PRED)^2) ))
+     
