@@ -19,7 +19,7 @@ df <- scale(mtcars)
 heatmap(df, scale = "none")
 
 # half hour and day
-png(filename = "myheatmap.png", width = 9, height = 5, units = "in", res = 300)
+png(filename = "myheatmap_full.png", width = 9, height = 5, units = "in", res = 300)
 gplots::heatmap.2(call_table, Rowv=NA, Colv=NA, dendrogram = "none",
           margins = c(4,4), # Adds margins below and to the right
           lmat = rbind(c(2,4),c(3,1)), # 1=heatmap, 2=row dendogram, 3=col dendogram, 4= key
@@ -34,7 +34,7 @@ gplots::heatmap.2(call_table, Rowv=NA, Colv=NA, dendrogram = "none",
           )
 dev.off()
 
-png(filename = "histogram_time.png", width = 9, height = 5, units = "in", res = 300)
+png(filename = "histogram_time.png", width = 12, height = 8, units = "in", res = 300)
 hist(training$sinceMidnights, breaks = seq(-0.5, 24.5, 0.5),
      col="darkred", main = paste("Calls per 30 minutes"),  xlab = "Time", ylab="Number of calls")
 dev.off()

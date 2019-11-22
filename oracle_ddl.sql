@@ -13,3 +13,11 @@ create table calls (
 );
 
 alter table calls add  (timerounded date);
+
+drop table avol;
+create table avol (
+    contactStart DATE PRIMARY KEY,
+    callVolume NUMBER(38),
+    calls NUMBER(38)
+    );
+    

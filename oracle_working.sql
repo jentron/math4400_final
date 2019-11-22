@@ -7,9 +7,9 @@ update calls set timerounded = trunc((contactStart - trunc(contactStart))*2*24)/
 
 
 -- "","timerounded","AVG(inQueueSeconds)","summary2$`AVG(abandonseconds)`","summary3$`AVG(abandoned)`","summary4$`COUNT(campaignId)`","CallVolume","HandleTime"
-select timerounded, avg(inqueueseconds), avg(abandonseconds), avg(abandoned), count(campaignID), count(x1) CallVolume, AVG(NULLIF(agentseconds,0)) as AHT
+select timerounded, round((timerounded-TRUNC(timerounded))*24, 1) as hour, avg(inqueueseconds), avg(abandonseconds), avg(abandoned), count(campaignID), count(x1) CallVolume, AVG(NULLIF(agentseconds,0)) as AHT
 from calls
-where synthetic = 'FALSE'
+where (synthetic = 'FALSE' or synthetic = 'TRUE' )
 group by timerounded
 order by timerounded;
 
@@ -35,3 +35,28 @@ order by to_char(contactstart, 'DDD'), campaignID;
 
 select count(distinct campaignid) from calls;
 select distinct campaignid from calls;
+
+select trunc(contactstart), count(*) as callvolume
+from calls
+group by trunc(contactstart)
+order by trunc(contactstart) ;
+
+select contactstart, contactid, agentseconds, round(agentseconds/3600, 2) agenthours from calls 
+where agentseconds > 2*60*60 
+    and synthetic='FALSE'
+order by contactid asc, agentseconds desc;
+
+select count(*) from calls where agentseconds > 2*60*60;
+
+select count(*) from calls where synthetic = 'FALSE';
+
+select contactstart, train.callvolume
+from avol 
+left join (
+    select timerounded, count(x1) CallVolume, AVG(NULLIF(agentseconds,0)) as AHT
+    from calls
+  --  where (synthetic = 'FALSE' or synthetic = 'TRUE' )
+    group by timerounded
+) train
+on avol.contactstart = train.timerounded
+order by contactstart;

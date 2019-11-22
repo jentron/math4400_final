@@ -1,6 +1,7 @@
 # Load RODBC package
 library(RODBC)
 
+setwd("~/Weber/MATH4400/stats_final/")
 # Create a connection to the database called "channel"
 channel <- odbcConnect("MATH_4400", uid="MATH4400", pwd=password)
 
@@ -24,10 +25,12 @@ ggplot(test_data, aes(date)) +
   geom_line(aes(y = var1, colour = "var1"))
 
 library(ggplot2)
+png(filename = "CallVolumePerDay.png", width = 9, height = 5, units = "in", res = 300)
 ggplot(callsperday, aes(CALLDATE))  + 
   geom_line(aes(y = PRED), colour = "red") +
   geom_line(aes(y = CALLVOLUME), colour = "black") +
-  xlab("Date") + ylab("Call Volume") + labs(title = "Call Volume per Day") + theme(panel.background = element_rect(fill='#e3e1f1', colour='#a391b1'))
+  xlab("Date") + ylab("Call Volume")  + theme(panel.background = element_rect(fill='#F3F1f1', colour='#a391b1'))
+dev.off()
 
 sqrt(with(callsperday, sum((CALLVOLUME-PRED)^2) ))
      
