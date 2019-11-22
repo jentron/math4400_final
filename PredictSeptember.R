@@ -22,5 +22,18 @@ gplots::heatmap.2(ttrial.table, Rowv=NA, Colv=NA, dendrogram = "none",
 dev.off()
 
 
-boxplot(AHT~factor(day.name[weekday], levels=day.name, ordered=TRUE), data=predictions)
+##boxplot(AHT~factor(day.name[weekday], levels=day.name, ordered=TRUE), data=predictions)
+png(filename = "aht_prediction.png", width = 9, height = 5, units = "in", res = 300)
 boxplot(AHT~factor(period/2), data = predictions, subset = weekday %in% c(2:6), xlab='hour')        
+dev.off()
+
+
+library(readr)
+answers_volume <- read_csv("answers_volume-1.csv",
+                           col_types = cols(date = col_datetime(format = "%Y-%m-%d %H:%M:%S")))
+answers_volume$calls <- myPredict(answers_volume$date)$CV
+
+library(readr)
+answers_aht <- read_csv("answers_handletime-1.csv",
+                           col_types = cols(date = col_datetime(format = "%Y-%m-%d %H:%M:%S")))
+answers_aht$handletime <- myPredict(answers_aht$date)$AHT
