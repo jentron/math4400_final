@@ -1,14 +1,33 @@
 ## Build ccc
+## training data needs to be loaded with hackathon.R and processed with fix_data.R
+library(sqldf)
+dayOfWeekCounts <- sqldf("select julianDay, dayOfWeek, count(*) as freq from training group by julianDay, dayOfWeek")
+ccc<-aov(freq~as.factor(dayOfWeek), data = dayOfWeekCounts)
 
 ## Build callsperhalfhour
+## see call_volume_per_hour.R
 
 ## Build dayOfWeekMeanAgentSeconds
+## see hackathon.R
+
 
 dayCoeff <- predict(ccc, newdata=as.factor(1:7))
 ## c(40.94118, 10868.52941,  9552.38889,  7981.61111,  8370.88889,  8398.27778, 91.88235 ) ## from anova
-hourCoeff <- boxplot( AHT~HOUR_f,data=callsperhalfhour, subset = (callsperhalfhour$WDAY %in% c(2:6)), plot=FALSE)$stats[3,]
-hourCoeff[is.na(hourCoeff)] <- median(hourCoeff, na.rm=TRUE)
-hourCoeff <- hourCoeff/mean(hourCoeff) # normalize
+hourCoeff <- boxplot( CALLVOLUME~HOUR_f,data=callsperhalfhour, subset = (callsperhalfhour$WDAY %in% c(2:6)), plot=FALSE)$stats[3,]
+
+for( i in which(is.na(hourCoeff))){
+  if( i == 1) {
+    hourCoeff[1] <- 0
+    next;
+  }
+  if( i == 48) {
+    hourCoeff[48] <- 0
+    next;
+  }
+  hourCoeff[i] <- hourCoeff[i-1]
+}
+
+hourCoeff <- hourCoeff/sum(hourCoeff) # normalize
 
 # grab the medians from a boxplot
 ahtCoeff  <- boxplot( AHT~HOUR_f,data=callsperhalfhour, subset = (callsperhalfhour$WDAY %in% c(2:6)), plot=FALSE)$stats[3,]
@@ -46,8 +65,8 @@ myPredict <- function(date) {
   m <- lubridate::minute(date)
   m <- ifelse(m<30, 0, 0.5)
   h <- (h+m)*2+1
-  cv <- dayCoeff[w]*hourCoeff[h]
+  cv <- round(dayCoeff[w]*hourCoeff[h])
   aht <- ahtCoeff[h]*ahtDayValues[w]
-  return(list(CV=cv, AHT=aht, Date=date, weekday=w, period=h))
+  return(data.frame(Date=date, CV=cv, AHT=aht, weekday=w, period=h))
 }
 
