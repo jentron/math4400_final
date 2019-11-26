@@ -32,8 +32,10 @@ library(readr)
 answers_volume <- read_csv("answers_volume-1.csv",
                            col_types = cols(date = col_datetime(format = "%Y-%m-%d %H:%M:%S")))
 answers_volume$calls <- myPredict(answers_volume$date)$CV
+write.table(answers_volume, file="answers_volume-ron.csv",sep=",", row.names = FALSE, qmethod = "double")
 
 library(readr)
 answers_aht <- read_csv("answers_handletime-1.csv",
                            col_types = cols(date = col_datetime(format = "%Y-%m-%d %H:%M:%S")))
 answers_aht$handletime <- myPredict(answers_aht$date)$AHT
+write.table(answers_aht, file="answers_handletime-ron.csv",sep=",", row.names = FALSE, qmethod = "double")

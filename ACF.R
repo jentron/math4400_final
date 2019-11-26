@@ -1,3 +1,5 @@
+acf(dayOfWeekCounts$freq, lag.max = 21)
+
 acf(dayOfWeekCounts$freq[dayOfWeekCounts$dayOfWeek==2])
 acf(dayOfWeekCounts$freq[dayOfWeekCounts$dayOfWeek==3])
 acf(dayOfWeekCounts$freq[dayOfWeekCounts$dayOfWeek==4])
@@ -5,6 +7,9 @@ png(filename = "ACF_Wednesday.png", width = 9, height = 5, units = "in", res = 3
 acf(dayOfWeekCounts$freq[dayOfWeekCounts$dayOfWeek==5], main="Series Day of Week Counts")
 dev.off()
 acf(dayOfWeekCounts$freq[dayOfWeekCounts$dayOfWeek==6])
+
+
+acf(diff(dayOfWeekCounts$freq), lag.max = 21)
 acf(diff(dayOfWeekCounts$freq[dayOfWeekCounts$dayOfWeek==2]))
 acf(diff(dayOfWeekCounts$freq[dayOfWeekCounts$dayOfWeek==3]))
 acf(diff(dayOfWeekCounts$freq[dayOfWeekCounts$dayOfWeek==4]))
